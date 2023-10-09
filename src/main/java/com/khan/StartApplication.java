@@ -12,9 +12,9 @@ public class StartApplication {
 
     @GetMapping("/")
     public String index(final Model model) {
-        model.addAttribute("title", "Deployed on k8s cluster");
-        model.addAttribute("msg", "Deploy Sp-boot-poc app on k8s cluster");
-        model.addAttribute("msg", "Jenkins Docker pipeline");
+        model.addAttribute("title", "Deployed on k8s cluster Using Jenkins Pipeline");
+
+
         return "index";
     }
 
