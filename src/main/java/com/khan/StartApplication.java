@@ -12,8 +12,8 @@ public class StartApplication {
 
     @GetMapping("/")
     public String index(final Model model) {
-        model.addAttribute("title", "Spring Boot App + Maven");
-        model.addAttribute("msg", "Welcome to the Spring Boot App");
+        model.addAttribute("title", "Deployed on k8s cluster");
+        model.addAttribute("msg", "Deploy Sp-boot-poc app on k8s cluster");
         model.addAttribute("msg", "Jenkins Docker pipeline");
         return "index";
     }
