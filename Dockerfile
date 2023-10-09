@@ -7,6 +7,6 @@
 # RUN mvn -B -f pom.xml clean package -DskipTests
 
 FROM openjdk:8-jdk-slim
-COPY /workspace/target/*.jar app.jar
+COPY target/*.jar app.jar
 #EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]
