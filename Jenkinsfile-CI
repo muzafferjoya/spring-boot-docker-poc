@@ -72,6 +72,22 @@ pipeline {
                 }
             }
         }
+        stage('Docker scan with TRIVY') {
+            steps {
+                script {
+                    sh("docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/tmp/.cache/ aquasec/trivy:0.10.0 ${registry}:latest")
+                }
+            }
+        }
+        stage('Explore Image Layers with DIVE') {
+            steps {
+                script {
+                    sh "docker run --rm -i \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        wagoodman/dive:latest --ci ${registry}:latest --lowestEfficiency=0.8 --highestUserWastedPercent=0.45"
+                }
+            }
+        }
 
         stage('Push Image To Docker Hub') {
             steps {
@@ -83,6 +99,14 @@ pipeline {
                 }
             }
         }
+        stage('Clean docker images') {
+            steps {
+                echo 'Cleaning the docker images'
+                sh 'docker rmi ${registry}:latest'
+                sh 'docker rmi ${registry}:$BUILD_NUMBER'
+            }
+        }
+
     //  stage('Remote Server Test Connections') {
     //     steps {
     //         sshagent(['target-server']) {
