@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sp-boot-poc
+spec:
+  selector:
+    matchLabels:
+      app: sp-boot-poc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sp-boot-poc
+    spec:
+      containers:
+      - name: sp-boot-poc
+        image: muzafferjoya/sp-boot-poc:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sp-boot-poc
+spec:
+  selector:
+    app: sp-boot-poc
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30011
+  type: NodePort
