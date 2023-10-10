@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sp-boot-poc:2
+  name: sp-boot-poc:3
 spec:
   selector:
     matchLabels:
-      app: sp-boot-poc:2
+      app: sp-boot-poc:3
   replicas: 1
   template:
     metadata:
       labels:
-        app: sp-boot-poc:2
+        app: sp-boot-poc:3
     spec:
       containers:
-      - name: sp-boot-poc:2
-        image: muzafferjoya/sp-boot-poc:2
+      - name: sp-boot-poc:3
+        image: muzafferjoya/sp-boot-poc:3
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: sp-boot-poc:2
+  name: sp-boot-poc:3
 spec:
   selector:
-    app: sp-boot-poc:2
+    app: sp-boot-poc:3
   ports:
     - protocol: TCP
       port: 80
