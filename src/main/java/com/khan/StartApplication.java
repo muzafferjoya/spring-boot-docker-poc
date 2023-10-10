@@ -12,7 +12,7 @@ public class StartApplication {
 
     @GetMapping("/")
     public String index(final Model model) {
-        model.addAttribute("title", "Deployed on k8s cluster Using Jenkins Pipeline");
+        model.addAttribute("title", "This is a Sample Application");
 
 
         return "index";
