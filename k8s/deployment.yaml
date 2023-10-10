@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sp-boot-poc:3
+  name: poc
 spec:
   selector:
     matchLabels:
-      app: sp-boot-poc:3
+      app: poc
   replicas: 1
   template:
     metadata:
       labels:
-        app: sp-boot-poc:3
+        app: poc
     spec:
       containers:
-      - name: sp-boot-poc:3
+      - name: poc
         image: muzafferjoya/sp-boot-poc:3
         ports:
         - containerPort: 8080
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: sp-boot-poc:3
+  name: poc
 spec:
   selector:
-    app: sp-boot-poc:3
+    app: poc
   ports:
     - protocol: TCP
       port: 80
