@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: sp-boot-poc
-        image: muzafferjoya/sp-boot-poc:7
+        image: muzafferjoya/sp-boot-poc:latest
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
