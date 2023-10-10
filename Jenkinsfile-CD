@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    environment {
+                APP_NAME = 'muzafferjoya/sp-boot-poc'
+    }
+
+    stages {
+        stage('Updating Kubernetes deployment file2') {
+            steps {
+                echo 'updating app-deploy.yaml file'
+                script {
+                        dir('k8s') {
+                        sh """
+                        cat deployment.yaml
+                        sed -i 's/sp-boot-poc.*/sp-boot-poc:$BUILD_NUMBER/g' deployment.yaml
+                        cat deployment.yaml
+                        """
+                        }
+                }
+            }
+        }
+
+            // stage('Push the changed deployment yaml file to Git') {
+            //     steps {
+            //         echo 'Pushing changed files to Git'
+            //         script {
+            //                 dir('k8s') {
+            //                 sh '''
+            //                 touch samplefile.txt
+            //                 git config --global user.name "Muzaffar khan"
+            //                 git config --global user.email "muzafferjoya@gmail.com"
+            //                 git add .
+            //                 git commit -m "updated the deployment file"
+            //                 '''
+            //                 withCredentials([gitUsernamePassword(credentialsId: 'muzaffar-github-cred', gitToolName: 'Default')])
+            //                     {
+            //                     sh 'git push origin HEAD:master'
+            //                     }
+            //                 }
+            //         }
+            //     }
+            // }
+    }
+}
