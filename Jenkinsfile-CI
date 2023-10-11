@@ -106,16 +106,31 @@ pipeline {
                 sh 'docker rmi ${registry}:$BUILD_NUMBER'
             }
         }
-        stage('Trigger CD Pipeline') {
-            steps {
-                script {
-                    // Trigger the downstream pipeline
-                    build job: 'K8S-Cluster/sp-boot-poc-cd', parameters: [
-                        string(name: 'BUILD_NUMBER', value: "${BUILD_NUMBER}")
-                    ]
-                }
-            }
-        }
+
+        stage('Trigger cd pipeline') {
+                    steps {
+                        echo 'Triggering cd pipeline'
+                        script {
+                                sh """
+                                    curl http://44.197.183.208:8080/job/K8S-Cluster/job/sp-boot-poc-cd/build?token=argocd \
+                                        --user master:116f36eeaac7c934023a60bd73fe3760e7 \
+                                        --data BUILD_NUMBER=$BUILD_NUMBER --data verbosity=high \
+                                        -H content-type:application/x-www-form-urlencoded \
+                                        -H cache-control:no-cache
+                                    """
+                        }
+                    }
+                        }
+        // stage('Trigger CD Pipeline') {
+        //     steps {
+        //         script {
+        //             // Trigger the downstream pipeline
+        //             build job: 'K8S-Cluster/sp-boot-poc-cd', parameters: [
+        //                 string(name: 'BUILD_NUMBER', value: "${BUILD_NUMBER}")
+        //             ]
+        //         }
+        //     }
+        // }
 
     //  stage('Remote Server Test Connections') {
     //     steps {
