@@ -13,7 +13,7 @@ pipeline {
                         dir('k8s') {
                         sh """
                         cat deployment.yaml
-                        sed -i 's/sp-boot-poc.*/sp-boot-poc:${IMAGE_TAG}/g' deployment.yaml
+                        sed -i 's/sp-boot-poc.*/sp-boot-poc:${BUILD_NUMBER}/g' deployment.yaml
                         cat deployment.yaml
                         """
                         }
