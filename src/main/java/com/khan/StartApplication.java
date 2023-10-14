@@ -14,6 +14,7 @@ public class StartApplication {
     public String index(final Model model) {
         model.addAttribute("title", "CI - Jenkins , CD ArogCD");
         model.addAttribute("msg", "Hello From ArgoCD");
+        model.addAttribute("msg", "lotto");
 
 
         return "index";
