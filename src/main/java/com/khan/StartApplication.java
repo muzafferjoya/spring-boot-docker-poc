@@ -13,6 +13,7 @@ public class StartApplication {
     @GetMapping("/")
     public String index(final Model model) {
         model.addAttribute("title", "CI - Jenkins , CD ArogCD");
+        model.addAttribute("msg", "Hello From ArgoCD");
 
 
         return "index";
