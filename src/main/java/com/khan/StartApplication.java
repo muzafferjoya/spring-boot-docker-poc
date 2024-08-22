@@ -14,6 +14,8 @@ public class StartApplication {
     public String index(final Model model) {
         model.addAttribute("title", "CI - Jenkins , CD Jenkins");
         model.addAttribute("msg", "Deployment , on EKS cluster");
+        model.addAttribute("msg", "Deployment , on EKS cluster");
+        model.addAttribute("msg", "Deployment , on EKS cluster");
 
         return "index";
     }
