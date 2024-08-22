@@ -1,0 +1,60 @@
+pipeline {
+    
+  environment {
+    imagename = "muzafferjoya/spring-boot-poc"
+    registryCredential = 'muzaffar-hub-id'
+    dockerImage = ''
+  }
+  
+  agent any
+  
+  stages {
+      
+    stage('Clean Workspace') {
+       steps {
+           cleanWs()
+          }
+        }
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/muzafferjoya/spring-boot-docker-poc.git', branch: 'master'])
+
+      }
+    }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Push Image To Docker Registry') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+    stage('Update EKS Cluster Config'){
+        steps{
+            sh 'aws eks update-kubeconfig --region us-east-2 --name demo-*****'
+            sh 'kubectl cluster-info'
+            
+        }
+    }
+    stage('Deploy to EKS') {
+      steps {
+        script {
+          sh '''
+            kubectl set image deployment/poc poc=${imagename}:${BUILD_NUMBER}
+            kubectl rollout status deployment/poc
+          '''
+        }
+      }
+    }
+  }
+}
