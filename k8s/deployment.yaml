@@ -14,21 +14,7 @@ spec:
     spec:
       containers:
       - name: poc
-        image: muzafferjoya/sp-boot-poc:40
+        image: muzafferjoya/sp-boot-poc:latest
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: poc
-spec:
-  selector:
-    app: poc
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-      nodePort: 30011
-  type: NodePort
