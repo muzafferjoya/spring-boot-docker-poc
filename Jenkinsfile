@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    imagename = "muzaffarjoya/spring-boot-poc"
+    imagename = "muzafferjoya/spring-boot-poc"
     registryCredential = 'docker-hub'
     dockerImage = ''
   }
