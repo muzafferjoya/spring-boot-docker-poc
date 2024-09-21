@@ -14,6 +14,7 @@ public class StartApplication {
     public String index(final Model model) {
         model.addAttribute("title", "CI - Jenkins , CD Jenkins");
         model.addAttribute("msg", "Deployment on ,Docker Container");
+        model.addAttribute("msg", "Version ,Deploying...");
 
         return "index";
     }
