@@ -1,0 +1,65 @@
+pipeline {
+    
+  environment {
+    imagename = "muzafferjoya/spring-boot-poc"
+    registryCredential = 'muzaffar-hub-id'
+    dockerImage = ''
+  }
+  
+  agent any
+  
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/muzafferjoya/spring-boot-docker-poc.git', branch: 'master'])
+
+      }
+    }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+    
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $imagename:$BUILD_NUMBER"
+         sh "docker rmi $imagename:latest"
+
+      }
+    }
+    stage('Deploy') {
+            steps {
+                sshagent(['ubuntu']) {
+                     // Stop and remove the old container
+                    sh 'ssh ubuntu@34.221.38.71 "docker ps -f name=myspringboot -q | xargs --no-run-if-empty docker container stop"'
+                    sh 'ssh ubuntu@34.221.38.71 "docker container ls -a -fname=myspringboot -q | xargs -r docker container rm"'
+                    
+                      // Remove old images
+            sh '''
+            OLD_IMAGES=$(ssh ubuntu@34.221.38.71 "docker images muzafferjoya/spring-boot-poc --format '{{.ID}}' | tail -n +3")
+            if [ -n "$OLD_IMAGES" ]; then
+                ssh ubuntu@34.221.38.71 "docker rmi $OLD_IMAGES || true"
+            fi
+            '''
+                    
+                    // Run the new container
+                    sh 'ssh ubuntu@34.221.38.71 "docker run -itd --rm -p 8080:8080 --name myspringboot muzafferjoya/spring-boot-poc:$BUILD_NUMBER"'
+                }
+            }
+        }
+    }
+}
