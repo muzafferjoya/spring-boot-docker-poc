@@ -1,0 +1,55 @@
+pipeline {
+    
+  environment {
+    imagename = "muzafferjoya/spring-boot-poc"
+    registryCredential = 'muzaffar-hub-id'
+    dockerImage = ''
+  }
+  
+  agent any
+  
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/muzafferjoya/spring-boot-docker-poc.git', branch: 'master'])
+
+      }
+    }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+    
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $imagename:$BUILD_NUMBER"
+         sh "docker rmi $imagename:latest"
+
+      }
+    }
+        
+        stage('Deploying using compose') {
+            steps {
+                sshagent(['ubuntu']) {
+                    
+                    sh 'ssh ubuntu@34.221.38.71 "cd /home/ubuntu/sp-app && docker-compose pull && docker-compose up -d --no-deps --build myspringboot"'
+                    
+                }
+            }
+        }
+    }
+}
