@@ -10,8 +10,8 @@ RUN mvn -B -f pom.xml clean package -DskipTests
 # Run stage
 FROM openjdk:24-ea-18-jdk-oraclelinux8
 
-# Update and install the required openssl-libs package using microdnf
-RUN microdnf update -y && microdnf install -y openssl-libs-1:1.1.1k-5.0.1.ksplice1.el8_5
+# Update and install the latest version of openssl-libs
+RUN microdnf update -y && microdnf install -y openssl-libs
 
 # Copy the jar from the build stage
 COPY --from=build /workspace/target/*.jar app.jar
