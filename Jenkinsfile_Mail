@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+    
+    environment {
+    imagename = "muzafferjoya/spring-boot-poc"
+    registryCredential = 'muzaffar-hub-id'
+    dockerImage = ''
+  }
+    
+    stages {
+        
+        stage('Clean Workspace'){
+            steps{
+                cleanWs()
+            }
+        }
+        stage('Cloning Git') {
+          steps {
+            git([url: 'https://github.com/muzafferjoya/spring-boot-docker-poc.git', branch: 'master'])
+
+      }
+    }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Push Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+    stage('Docker Image Scan') {
+            steps {
+                script{
+                    //sh 'trivy image --format template --template "@/usr/bin/html.tpl" -o sp-report.html sp-app:latest'
+                    sh ' trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o sp-report.html ${imagename}:latest'
+                }
+                
+            }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'sp-report.html', onlyIfSuccessful: true               
+            emailext attachLog: true, attachmentsPattern: 'sp-report.html',
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
+                subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}",
+                to: "muzafferjoya@gmail.com"
+                
+            
+        }
+    }
+}
