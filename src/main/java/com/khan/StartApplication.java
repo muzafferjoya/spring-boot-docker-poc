@@ -12,8 +12,8 @@ public class StartApplication {
 
     @GetMapping("/")
     public String index(final Model model) {
-        model.addAttribute("title", "CI - Jenkins , CD Using ArogCD");
-        model.addAttribute("msg", "Deployment ON , EKS Cluster");
+        model.addAttribute("title", "CICD Using Jenkins and ArgoCD");
+        model.addAttribute("msg", "Deployment at , EKS Cluster");
 
         return "index";
     }
