@@ -49,14 +49,16 @@ pipeline {
         }
     }
     post {
-        always {
-            archiveArtifacts artifacts: 'sp-report.html', onlyIfSuccessful: true               
-            emailext attachLog: true, attachmentsPattern: 'sp-report.html',
-                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
-                subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}",
-                to: "muzafferjoya@gmail.com"
-                
-            
-        }
+        failure {
+            emailext attachLog: true, attachmentsPattern: 'sp-report.html', body: '''${SCRIPT, template="groovy-html.template"}''', 
+                    subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed", 
+                    mimeType: 'text/html',to: "muzafferjoya@gmail.com"
+            }
+         success {
+             archiveArtifacts artifacts: 'sp-report.html', onlyIfSuccessful: true
+               emailext attachLog: true, attachmentsPattern: 'sp-report.html', body: '''${SCRIPT, template="groovy-html.template"}''', 
+                    subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful", 
+                    mimeType: 'text/html',to: "muzafferjoya@gmail.com"
+          }      
     }
 }
