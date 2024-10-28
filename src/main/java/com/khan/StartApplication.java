@@ -12,8 +12,8 @@ public class StartApplication {
 
     @GetMapping("/")
     public String index(final Model model) {
-        model.addAttribute("title", "CI - Jenkins , SSL CD Docker Compose");
-        model.addAttribute("msg", "Deployment ON , Compose");
+        model.addAttribute("title", "CI - Jenkins , CD Using ArogCD");
+        model.addAttribute("msg", "Deployment ON , EKS Cluster");
 
         return "index";
     }
