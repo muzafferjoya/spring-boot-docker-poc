@@ -4,9 +4,4 @@ services:
     image: muzafferjoya/spring-boot-poc:latest
     ports:
       - "8080:8080"
-    deploy:
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
+    restart: on-failure
