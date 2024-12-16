@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+        tools {
+        maven 'maven'
+        }
+
+    stages {
+                stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+                }
+
+        stage('Git Checkout') {
+            steps {
+                git branch: 'master', changelog: false, poll: false, url: 'https://github.com/muzafferjoya/spring-boot-docker-poc.git'
+            }
+        }
+
+        stage('Maven Compile Test Packging') {
+            steps {
+                sh 'mvn -B -f pom.xml clean package -DskipTests'
+            }
+        }
+        stage('Deploy to Artifactory') {
+            environment {
+                // Define the target repository in Artifactory
+                TARGET_REPO = 'java-web-app'
+            }
+            
+            steps {
+                script {
+                    try {
+                        def server = Artifactory.newServer url: 'http://54.200.246.151:8082/artifactory', credentialsId: 'jfrog-user-pass'
+                        def uploadSpec = """{
+                            "files": [
+                                {
+                                    "pattern": "target/*.jar",
+                                    "target": "${TARGET_REPO}/"
+                                }
+                            ]
+                        }"""
+                        
+                        server.upload(uploadSpec)
+                    } catch (Exception e) {
+                        error("Failed to deploy artifacts to Artifactory: ${e.message}")
+                    }
+                }
+            }
+        }
+
+        
+        
+    }
+}
